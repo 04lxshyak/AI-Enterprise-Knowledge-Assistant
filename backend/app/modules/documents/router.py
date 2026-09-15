@@ -41,7 +41,7 @@ def list_documents(
     user: UserContext = Depends(get_and_verify_user),
     service: DocumentService = Depends(get_document_service),
 ):
-    """Lista documentos del usuario"""
+    """Lists the user's documents."""
     return service.list_documents(user, skip, limit)
 
 
@@ -52,7 +52,7 @@ def get_document(
     user: UserContext = Depends(get_and_verify_user),
     service: DocumentService = Depends(get_document_service),
 ):
-    """Obtiene un documento específico"""
+    """Gets a specific document."""
     return service.get_document(document_id, user)
 
 
@@ -63,7 +63,7 @@ def delete_document(
     user: UserContext = Depends(get_and_verify_user),
     service: DocumentService = Depends(get_document_service),
 ):
-    """Elimina un documento"""
+    """Deletes a document."""
     success = service.delete_document(document_id, user)
     if success:
         return {"message": "Document deleted successfully"}

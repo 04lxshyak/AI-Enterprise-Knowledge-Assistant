@@ -38,12 +38,12 @@ export function DashboardSidebar({ className, onNewConversation, onAnalyticsClic
   const [avgAccuracy, setAvgAccuracy] = useState<number | null>(null);
 
   useEffect(() => {
-    // Actualizar el conteo inicial
+    // Update the initial count.
     setQueriesCount(countChatQueries());
     const accuracy = calculateAverageConfidence();
     setAvgAccuracy(accuracy > 0 ? accuracy : null);
 
-    // Actualizar cada vez que cambie el localStorage
+    // Update whenever localStorage changes.
     const handleStorageChange = () => {
       setQueriesCount(countChatQueries());
       const accuracy = calculateAverageConfidence();
@@ -51,7 +51,7 @@ export function DashboardSidebar({ className, onNewConversation, onAnalyticsClic
     };
 
     window.addEventListener("storage", handleStorageChange);
-    // También escuchar cambios personalizados (cuando se agrega un mensaje en la misma pestaña)
+    // Also listen for custom changes when a message is added in the same tab.
     window.addEventListener("chat_updated", handleStorageChange);
 
     return () => {

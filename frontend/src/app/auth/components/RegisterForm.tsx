@@ -64,7 +64,7 @@ export function RegisterForm({ onRegister, onLoginClick, isLoading = false, erro
       [field]: value
     }))
     
-    // Limpiar errores cuando el usuario empiece a escribir
+    // Clear errors when the user starts typing.
     if (validationErrors.length > 0) {
       setValidationErrors([])
     }

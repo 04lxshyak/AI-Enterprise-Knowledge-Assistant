@@ -5,7 +5,7 @@ from pathlib import Path
 
 
 class DocumentRepository:
-    """Repositorio para operaciones de base de datos de documentos"""
+    """Repository for document database operations."""
     
     def __init__(self, db: Session):
         self.db = db
@@ -20,7 +20,7 @@ class DocumentRepository:
         user_id: Optional[int] = None,
         status: str = "processed"
     ) -> Document:
-        """Crear un nuevo documento en la base de datos"""
+        """Creates a new document in the database."""
         document = Document(
             filename=filename,
             file_path=file_path,
@@ -36,20 +36,20 @@ class DocumentRepository:
         return document
 
     def get_document_by_filename(self, filename: str) -> Optional[Document]:
-        """Obtener un documento por su nombre de archivo"""
+        """Returns a document by filename."""
         return self.db.query(Document).filter(Document.filename == filename).first()
     
     def generate_unique_filename(self, filename: str) -> str:
-        """Generar un nombre de archivo único si ya existe"""
+        """Generates a unique filename if one already exists."""
         path = Path(filename)
-        stem = path.stem  # nombre sin extensión
+        stem = path.stem  # Name without extension.
         suffix = path.suffix  # .pdf, .docx, etc.
         
-        # Verificar si el nombre original ya existe
+        # Check whether the original name already exists.
         if not self.get_document_by_filename(filename):
             return filename
         
-        # Buscar un nombre único incrementando el contador
+        # Find a unique name by incrementing the counter.
         counter = 1
         while True:
             new_filename = f"{stem}_{counter}{suffix}"
@@ -58,36 +58,36 @@ class DocumentRepository:
             counter += 1
 
     def get_document_by_filename_and_user(self, filename: str, user_id: int) -> Optional[Document]:
-        """Obtener un documento por su nombre de archivo y usuario"""
+        """Returns a document by filename and user."""
         return self.db.query(Document).filter(
             Document.filename == filename,
             Document.user_id == user_id
         ).first()
 
     def get_document_by_id(self, document_id: int) -> Optional[Document]:
-        """Obtener un documento por su ID"""
+        """Returns a document by ID."""
         return self.db.query(Document).filter(Document.id == document_id).first()
 
     def get_all_documents(self, skip: int = 0, limit: int = 100) -> List[Document]:
-        """Obtener todos los documentos con paginación"""
+        """Returns all documents with pagination."""
         return self.db.query(Document).order_by(Document.upload_date.desc()).offset(skip).limit(limit).all()
 
     def get_documents_by_user(self, user_id: int, skip: int = 0, limit: int = 100) -> List[Document]:
-        """Obtener documentos de un usuario específico con paginación"""
+        """Returns documents for a specific user with pagination."""
         return self.db.query(Document).filter(
             Document.user_id == user_id
         ).order_by(Document.upload_date.desc()).offset(skip).limit(limit).all()
 
     def count_documents(self) -> int:
-        """Contar total de documentos"""
+        """Counts all documents."""
         return self.db.query(Document).count()
 
     def count_documents_by_user(self, user_id: int) -> int:
-        """Contar documentos de un usuario específico"""
+        """Counts documents for a specific user."""
         return self.db.query(Document).filter(Document.user_id == user_id).count()
 
     def delete_document(self, document_id: int) -> bool:
-        """Eliminar un documento y sus embeddings asociados (cascade)"""
+        """Deletes a document and its associated embeddings through cascade."""
         document = self.get_document_by_id(document_id)
         if document:
             self.db.delete(document)
@@ -96,7 +96,7 @@ class DocumentRepository:
         return False
 
     def update_document_processing_result(self, document_id: int, chunks_count: int, status: str, indexing_cost: float | None = None) -> bool:
-        """Actualizar resultado completo del procesamiento"""
+        """Updates the full processing result."""
         document = self.get_document_by_id(document_id)
         if document:
             document.chunks_count = chunks_count
@@ -109,7 +109,7 @@ class DocumentRepository:
         return False
 
     def update_document_status(self, document_id: int, status: str) -> bool:
-        """Actualizar solo el estado del documento"""
+        """Updates only the document status."""
         document = self.get_document_by_id(document_id)
         if document:
             document.status = status
@@ -119,7 +119,7 @@ class DocumentRepository:
         return False
 
     def update_document_metadata(self, document_id: int, **kwargs) -> bool:
-        """Actualizar metadata del documento"""
+        """Updates document metadata."""
         document = self.get_document_by_id(document_id)
         if document:
             for key, value in kwargs.items():

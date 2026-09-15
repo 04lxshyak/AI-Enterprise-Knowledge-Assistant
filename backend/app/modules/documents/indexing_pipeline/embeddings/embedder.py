@@ -1,5 +1,5 @@
 """
-Embedder - Generación y almacenamiento de embeddings
+Embedder - embedding generation and storage
 """
 from typing import List, Dict, Any
 from voyageai import Client

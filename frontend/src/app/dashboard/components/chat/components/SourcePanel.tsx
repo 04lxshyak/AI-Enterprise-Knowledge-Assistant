@@ -34,7 +34,7 @@ export function SourcePanel({ references, onClose }: SourcePanelProps) {
     if (!confidence) return "bg-slate-400";
     if (confidence >= 90) return "bg-emerald-500/90";     // Verde profundo pero suave
     if (confidence >= 70) return "bg-teal-500/80";        // Verde azulado suave
-    if (confidence >= 50) return "bg-amber-500/80";       // Ámbar en vez de amarillo puro
+    if (confidence >= 50) return "bg-amber-500/80";       // Amber instead of pure yellow
     return "bg-rose-500/80";                              // Rosa en vez de rojo puro
   };
 

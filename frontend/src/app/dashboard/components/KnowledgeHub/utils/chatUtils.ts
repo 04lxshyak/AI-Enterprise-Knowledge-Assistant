@@ -1,5 +1,5 @@
 /**
- * Cuenta el número total de queries del usuario desde el historial del chat
+ * Counts the user's total queries from chat history.
  */
 export function countChatQueries(): number {
   try {
@@ -7,7 +7,7 @@ export function countChatQueries(): number {
     if (!chatHistory) return 0;
     
     const history = JSON.parse(chatHistory);
-    // Contar solo los mensajes del usuario (queries)
+    // Count only user messages (queries).
     return history.filter((msg: any) => msg.sender === "user").length;
   } catch {
     return 0;
@@ -15,7 +15,7 @@ export function countChatQueries(): number {
 }
 
 /**
- * Calcula el promedio de confidence de todas las respuestas del asistente
+ * Calculates the average confidence across all assistant responses.
  */
 export function calculateAverageConfidence(): number {
   try {
@@ -24,7 +24,7 @@ export function calculateAverageConfidence(): number {
     
     const history = JSON.parse(chatHistory);
     
-    // Filtrar solo mensajes del asistente que tengan confidence o sources con confidence
+    // Keep only assistant messages with confidence or sources that include confidence.
     const assistantMessages = history.filter((msg: any) => msg.sender === "assistant");
     
     if (assistantMessages.length === 0) return 0;
@@ -32,12 +32,12 @@ export function calculateAverageConfidence(): number {
     const confidences: number[] = [];
     
     assistantMessages.forEach((msg: any) => {
-      // Si el mensaje tiene "I don't have that information", lo saltamos
+      // Skip messages that say "I don't have that information".
       if (msg.content?.toLowerCase().includes("i don't have that information")) {
         return;
       }
       
-      // Buscar la mejor confidence (igual que en ChatMessage)
+      // Find the best confidence value, matching ChatMessage.
       if (msg.sources && msg.sources.length > 0) {
         const sourceConfidences = msg.sources
           .map((src: any) => src.confidence)
@@ -49,7 +49,7 @@ export function calculateAverageConfidence(): number {
         }
       }
       
-      // Si no hay sources con confidence, usar la confidence del mensaje
+      // If there are no sources with confidence, use the message confidence.
       if (typeof msg.confidence === "number") {
         confidences.push(msg.confidence);
       }
@@ -58,14 +58,14 @@ export function calculateAverageConfidence(): number {
     if (confidences.length === 0) return 0;
     
     const average = confidences.reduce((sum, conf) => sum + conf, 0) / confidences.length;
-    return Math.round(average * 10) / 10; // Redondear a 1 decimal
+    return Math.round(average * 10) / 10; // Round to 1 decimal place.
   } catch {
     return 0;
   }
 }
 
 /**
- * Formatea un número grande con separadores de miles
+ * Formats a large number with thousands separators.
  */
 export function formatNumber(num: number): string {
   return num.toLocaleString();

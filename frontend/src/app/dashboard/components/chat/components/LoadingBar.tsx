@@ -32,7 +32,7 @@ export function LoadingBar({ text }: LoadingBarProps) {
         }
       }, 100);
     }
-    // Animar pasos de EKA
+    // Animate EKA steps.
     stepRef.current = 0;
     setStep(0);
     const interval = setInterval(() => {
@@ -47,7 +47,7 @@ export function LoadingBar({ text }: LoadingBarProps) {
       <Card className="w-full max-w-md px-4 py-3 bg-background/95 border border-border/40 shadow rounded-xl flex flex-col items-center">
         <div className="flex items-center gap-2 mb-1">
           <Loader2 className="w-4 h-4 text-primary animate-spin" />
-          <span className="text-sm font-medium text-muted-foreground">{text || "EKA está trabajando en tu respuesta..."}</span>
+          <span className="text-sm font-medium text-muted-foreground">{text || "EKA is working on your answer..."}</span>
         </div>
         <div className="w-full bg-muted rounded-full h-2 mt-1">
           <div

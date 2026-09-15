@@ -49,7 +49,7 @@ export function ChatMessage({ message, onOpenSources }: ChatMessageProps) {
   const getConfidenceBorderColor = (confidence: number) => {
     if (confidence >= 90) return "border-t-emerald-500/70";   // Verde suave
     if (confidence >= 70) return "border-t-teal-500/60";      // Verde azulado
-    if (confidence >= 50) return "border-t-amber-500/60";     // Ámbar suave
+    if (confidence >= 50) return "border-t-amber-500/60";     // Soft amber
     return "border-t-rose-500/60";                            // Rosa suave
   };
 
@@ -57,7 +57,7 @@ export function ChatMessage({ message, onOpenSources }: ChatMessageProps) {
   const getConfidenceBadgeColor = (confidence: number) => {
     if (confidence >= 90) return "bg-emerald-500/85 hover:bg-emerald-500/95";  // Verde suave
     if (confidence >= 70) return "bg-teal-500/80 hover:bg-teal-500/90";       // Verde azulado
-    if (confidence >= 50) return "bg-amber-500/80 hover:bg-amber-500/90";     // Ámbar suave
+    if (confidence >= 50) return "bg-amber-500/80 hover:bg-amber-500/90";     // Soft amber
     return "bg-rose-500/80 hover:bg-rose-500/90";                             // Rosa suave
   };
 

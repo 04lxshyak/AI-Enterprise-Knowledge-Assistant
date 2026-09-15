@@ -59,10 +59,10 @@ class DocumentService:
             file_info = storage.get_file_info(file_path)
             original_filename = file_info["filename"]
             
-            # Generar un nombre único si ya existe en la base de datos
+            # Generate a unique name if it already exists in the database.
             unique_filename = self.repository.generate_unique_filename(original_filename)
             
-            # Crear el documento con el nombre único
+            # Create the document with the unique name.
             document = self.repository.create_document(
                 filename=unique_filename,
                 file_path=file_info["file_path"],

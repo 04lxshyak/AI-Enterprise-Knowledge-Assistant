@@ -1,5 +1,5 @@
 """
-Chunker de documentos - Capa técnica
+Document chunker - technical layer
 """
 from typing import List
 from langchain.text_splitter import MarkdownHeaderTextSplitter, TokenTextSplitter
@@ -8,13 +8,13 @@ import re
 
 
 class Chunker:
-    """Divide documentos en chunks procesables"""
+    """Splits documents into processable chunks."""
     
     def __init__(self, chunk_size: int = 2000, chunk_overlap: int = 10):
         self.chunk_size = chunk_size
         self.chunk_overlap = chunk_overlap
         
-        # Configurar splitters
+        # Configure splitters.
         self.markdown_splitter = MarkdownHeaderTextSplitter(
             headers_to_split_on=[
                 ("#", "h1"),
@@ -29,15 +29,15 @@ class Chunker:
     
     def chunk_documents(self, documents: List[Document]) -> List[Document]:
         """
-        Convierte documentos en chunks procesables
+        Converts documents into processable chunks.
         
         Args:
-            documents: Lista de documentos extraídos
+            documents: List of extracted documents.
             
         Returns:
-            Lista de chunks como Documents
+            List of chunks as Document objects.
         """
-        # 1. Split basado en estructura markdown (h1, h2, h3)
+        # 1. Split based on Markdown structure (h1, h2, h3).
         markdown_chunks = []
         
         for doc in documents:
@@ -46,26 +46,26 @@ class Chunker:
                 part.metadata.update(doc.metadata)
                 markdown_chunks.append(part)
         
-        # 2. Re-split chunks que son demasiado largos usando TokenTextSplitter
+        # 2. Re-split chunks that are too long using TokenTextSplitter.
         final_chunks = []
         
         for chunk in markdown_chunks:
             token_chunks = self.token_splitter.split_text(chunk.page_content)
             
             for i, token_text in enumerate(token_chunks):
-                # Extraer números de página del chunk
+                # Extract page numbers from the chunk.
                 page_markers = re.findall(r'<!--PAGE_(\d+)-->', token_text)
                 
-                # Limpiar texto removiendo marcadores de página
+                # Clean text by removing page markers.
                 clean_text = re.sub(r'<!--PAGE_\d+-->', '', token_text).strip()
                 
-                # Limpiar metadata headers (h1, h2, h3) removiendo marcadores de página
+                # Clean metadata headers (h1, h2, h3) by removing page markers.
                 metadata = {**chunk.metadata, "split_id": i}
                 for key in ['h1', 'h2', 'h3']:
                     if key in metadata and metadata[key]:
                         metadata[key] = re.sub(r'\s*<!--PAGE_\d+-->', '', metadata[key]).strip()
                 
-                # Encontrar el número de página mínimo en este chunk
+                # Find the lowest page number in this chunk.
                 if page_markers:
                     min_page = min(int(p) for p in page_markers)
                     metadata["page"] = min_page

@@ -26,7 +26,7 @@ export function ChatArea({ messages, isTyping, documentCount = 0, onSuggestionSe
     scrollToBottom();
   }, [messages, isTyping]);
 
-  // Estado vacío: sin scroll, centrado
+  // Empty state: no scroll, centered.
   if (messages.length === 0 && !isTyping) {
     return (
       <div className="flex-1 px-8 py-12 flex items-center justify-center">
@@ -57,7 +57,7 @@ export function ChatArea({ messages, isTyping, documentCount = 0, onSuggestionSe
     );
   }
 
-  // Con mensajes: ScrollArea habilitado
+  // With messages: ScrollArea enabled.
   return (
     <ScrollArea className="flex-1 px-8 py-6">
       <div className="max-w-4xl mx-auto space-y-8">

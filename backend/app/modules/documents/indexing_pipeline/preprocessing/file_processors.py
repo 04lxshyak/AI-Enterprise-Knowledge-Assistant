@@ -1,6 +1,6 @@
 """
-Utilidades para procesamiento de archivos específicos
-Capa de infraestructura - procesamiento técnico de formatos
+Utilities for specific file processing.
+Infrastructure layer - technical format processing.
 """
 import docx
 import fitz  # PyMuPDF
@@ -9,7 +9,7 @@ from pathlib import Path
 
 
 def process_docx(file_path, original_filename=None):
-    """Procesa archivo DOCX y extrae contenido estructurado"""
+    """Processes a DOCX file and extracts structured content."""
     try:
         doc = docx.Document(file_path)
         elements = []
@@ -40,12 +40,12 @@ def process_docx(file_path, original_filename=None):
         )]
 
     except Exception as e:
-        print(f"Error procesando DOCX {file_path}: {e}")
+        print(f"Error processing DOCX {file_path}: {e}")
         return []
 
 
 def process_md(file_path, original_filename=None):
-    """Procesa archivo Markdown"""
+    """Processes a Markdown file."""
     try:
         with open(file_path, "r", encoding="utf-8") as f:
             text = f.read()
@@ -59,12 +59,12 @@ def process_md(file_path, original_filename=None):
             metadata={"source": source_name, "type": "md"})
         ]
     except Exception as e:
-        print(f"Error procesando MD {file_path}: {e}")
+        print(f"Error processing MD {file_path}: {e}")
         return []
 
 
 def process_pdf(file_path, original_filename=None):
-    """Procesa archivo PDF y extrae contenido con estructura de headers"""
+    """Processes a PDF file and extracts content with heading structure."""
     try:
         doc = fitz.open(str(file_path))
         elements = []

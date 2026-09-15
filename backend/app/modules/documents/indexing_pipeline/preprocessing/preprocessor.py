@@ -1,5 +1,5 @@
 """
-Preprocesador de documentos - Capa técnica
+Document preprocessor - technical layer
 """
 from pathlib import Path
 from typing import List, Dict
@@ -7,7 +7,7 @@ from .file_processors import process_docx, process_md, process_pdf
 
 
 class Preprocessor:
-    """Extrae y convierte contenido de documentos a formato estándar"""
+    """Extracts and converts document content to the standard format."""
     
     SUPPORTED_EXTENSIONS = {
         ".pdf": process_pdf,
@@ -17,14 +17,14 @@ class Preprocessor:
     
     def process_files(self, file_paths: List[Path], filename_mapping: Dict[str, str] = None) -> Dict[str, List]:
         """
-        Procesa una lista de archivos y extrae su contenido
+        Processes a list of files and extracts their content.
         
         Args:
-            file_paths: Lista de rutas de archivos
-            filename_mapping: Diccionario opcional que mapea file_path.name -> nombre_original
+            file_paths: List of file paths.
+            filename_mapping: Optional dictionary mapping file_path.name -> original_filename.
             
         Returns:
-            Dict con filename como key y lista de Documents como value
+            Dict with filename as key and a list of Document objects as value.
         """
         results = {}
         filename_mapping = filename_mapping or {}
@@ -53,5 +53,5 @@ class Preprocessor:
         return results
     
     def is_supported_file(self, file_path: Path) -> bool:
-        """Verifica si el tipo de archivo está soportado"""
+        """Checks whether the file type is supported."""
         return file_path.suffix.lower() in self.SUPPORTED_EXTENSIONS

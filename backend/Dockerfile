@@ -1,27 +1,27 @@
-# Imagen base con Python + uv
+# Base image with Python + uv
 FROM astral/uv:python3.12-bookworm-slim
 
-# Optimizar Python
+# Optimize Python
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 
-# Directorio de trabajo
+# Working directory
 WORKDIR /app
 
-# Copiar dependencias
+# Copy dependencies
 COPY pyproject.toml uv.lock ./
 
-# Instalar dependencias
+# Install dependencies
 RUN uv sync --frozen --no-cache
 
-# Copiar el código fuente
+# Copy source code
 COPY app ./app
 
-# Render pasará esta variable automáticamente (PORT)
+# Render passes this variable automatically (PORT)
 ENV PORT=8000
 
-# Documentar el puerto
+# Document the port
 EXPOSE ${PORT}
 
-# Comando para correr FastAPI en producción
+# Command to run FastAPI in production
 CMD uv run uvicorn app.main:app --host 0.0.0.0 --port $PORT

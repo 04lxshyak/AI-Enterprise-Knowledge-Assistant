@@ -1,5 +1,5 @@
 """
-Pipeline de ingestion - Orquestador del procesamiento de documentos
+Ingestion pipeline - document processing orchestrator
 """
 from pathlib import Path
 from typing import List, Dict, Any
@@ -16,13 +16,13 @@ import os
 
 
 class IngestionPipeline:
-    """Pipeline completo de ingestion de documentos"""
+    """Complete document ingestion pipeline."""
     
     def __init__(self, db_session: Session, storage: SupabaseStorage):
         self.db = db_session
         self.storage = storage
         
-        # Inicializar componentes del pipeline
+        # Initialize pipeline components.
         self.preprocessor = Preprocessor()
         self.chunker = Chunker()
         self.embedder = Embedder(db_session)
@@ -40,19 +40,19 @@ class IngestionPipeline:
                 if not document:
                     raise ValueError(f"Document with id {document_id} not found")
                 
-                # Descargar archivo desde Supabase a un archivo temporal
+                # Download the file from Supabase to a temporary file.
                 file_content = self.storage.download_file(document.file_path)
                 
-                # Crear archivo temporal para procesamiento
+                # Create a temporary file for processing.
                 temp_file = tempfile.NamedTemporaryFile(delete=False, suffix=Path(document.filename).suffix)
                 temp_file.write(file_content)
                 temp_file.close()
                 temp_file_path = Path(temp_file.name)
                 
-                # Marcar como procesando
+                # Mark as processing.
                 self.repository.update_document_status(document_id, "processing")
                 
-                # 1. Pre-procesar archivo temporal con mapeo al nombre original
+                # 1. Preprocess the temporary file with a mapping to the original name.
                 temp_filename = temp_file_path.name
                 filename_mapping = {temp_filename: document.filename}
                 process_results = self.preprocessor.process_files([temp_file_path], filename_mapping)
@@ -62,20 +62,20 @@ class IngestionPipeline:
                     self.repository.update_document_status(document_id, "failed")
                     raise ValueError(f"No content could be extracted from {document.filename}")
                 
-                # 2. Crear chunks
+                # 2. Create chunks.
                 final_chunks = self.chunker.chunk_documents(docs)
                 
                 if not final_chunks:
                     self.repository.update_document_status(document_id, "failed")
                     raise ValueError(f"No chunks could be created from {document.filename}")
                 
-                # Calcular costo de indexación
+                # Calculate indexing cost.
                 indexing_cost = calculate_indexing_cost(final_chunks)
                 
-                # 3. Generar y guardar embeddings
+                # 3. Generate and store embeddings.
                 stored_count = self.embedder.generate_and_store_embeddings(final_chunks, document_id)
                 
-                # 4. Actualizar documento con chunks count y estado
+                # 4. Update the document with chunk count and status.
                 self.repository.update_document_processing_result(
                     document_id, 
                     chunks_count=len(final_chunks), 
@@ -93,7 +93,7 @@ class IngestionPipeline:
                 })
                 
             except Exception as e:
-                # Si hay error, actualizar estado
+                # If an error occurs, update the status.
                 self.repository.update_document_status(document_id, "failed")
                 results.append({
                     "document_id": document_id,
@@ -101,7 +101,7 @@ class IngestionPipeline:
                     "error": str(e)
                 })
             finally:
-                # Limpiar archivo temporal
+                # Clean up the temporary file.
                 if temp_file_path and temp_file_path.exists():
                     try:
                         os.unlink(temp_file_path)

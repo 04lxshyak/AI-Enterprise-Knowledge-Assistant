@@ -35,7 +35,7 @@ export default function Dashboard() {
       });
   }, [router]);
 
-  // Función para obtener el número real de documentos
+  // Fetch the real document count.
   const fetchDocumentCount = async () => {
     try {
       const token = localStorage.getItem("token");
@@ -56,7 +56,7 @@ export default function Dashboard() {
     }
   };
 
-  // Obtener el número real de documentos al cargar
+  // Fetch the real document count on load.
   useEffect(() => {
     fetchDocumentCount();
   }, []);

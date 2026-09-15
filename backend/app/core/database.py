@@ -18,14 +18,14 @@ def get_db():
         db.close()
 
 def init_db():
-    # ✅ Activar la extensión pgvector (solo la primera vez)
+    # Enable the pgvector extension if it is not already installed.
     with engine.connect() as conn:
         conn.execute(text("CREATE EXTENSION IF NOT EXISTS vector;"))
         conn.commit()
 
     import app.modules.users.models
     import app.modules.documents.models
-    import app.modules.analytics.models  # Importar modelo Document,Embedding
+    import app.modules.analytics.models
     
     #Base.metadata.drop_all(bind=engine)
     Base.metadata.create_all(bind=engine)

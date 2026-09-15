@@ -14,11 +14,11 @@ class Document(Base):
     file_path = Column(String, nullable=True)
     file_type = Column(String(10), nullable=False)  # pdf, docx, md
     upload_date = Column(DateTime, default=datetime.utcnow, nullable=False)
-    user_id = Column(Integer, nullable=True)  # Para tracking por usuario (futuro)
+    user_id = Column(Integer, nullable=True)  # For per-user tracking.
     chunks_count = Column(Integer, default=0, nullable=False)
     file_size_bytes = Column(Integer, nullable=True)
     status = Column(String(20), default="processed", nullable=False)  # processing, processed, failed
-    indexing_cost = Column(Float, nullable=True)  # Costo de indexación en usd
+    indexing_cost = Column(Float, nullable=True)  # Indexing cost in USD.
     
     embeddings = relationship("Embedding", back_populates="document", cascade="all, delete-orphan")
 

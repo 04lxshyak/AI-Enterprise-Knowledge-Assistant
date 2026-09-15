@@ -1,5 +1,5 @@
 """
-Utilidades para manejo de archivos con Supabase Storage
+Utilities for file handling with Supabase Storage.
 """
 from fastapi import UploadFile
 from typing import List, Optional, Dict
@@ -10,7 +10,7 @@ from pathlib import Path
 
 
 class SupabaseStorage:
-    """Manejo de archivos en Supabase Storage"""
+    """Handles files in Supabase Storage."""
     
     def __init__(self, supabase_url: str, supabase_key: str, bucket_name: str):
         self.client: Client = create_client(supabase_url, supabase_key)
@@ -18,7 +18,7 @@ class SupabaseStorage:
         self._ensure_bucket_exists()
     
     def _ensure_bucket_exists(self) -> None:
-        """Verifica que el bucket existe, si no lanza advertencia"""
+        """Checks that the bucket exists and logs a warning if it does not."""
         try:
             buckets = self.client.storage.list_buckets()
             bucket_exists = any(b.name == self.bucket_name for b in buckets)
@@ -29,22 +29,22 @@ class SupabaseStorage:
     
     async def save_uploaded_file(self, file: UploadFile, filename: Optional[str] = None, user_id: Optional[int] = None) -> str:
         """
-        Guarda un archivo en Supabase Storage
-        Si se proporciona user_id, guarda en carpeta user_<user_id>/filename
-        Returns: La ruta del archivo en Supabase (path/to/file.ext)
+        Saves a file in Supabase Storage.
+        If user_id is provided, saves it under user_<user_id>/filename.
+        Returns: The file path in Supabase (path/to/file.ext).
         """
         base_filename = filename or file.filename or f"uploaded_{uuid.uuid4()}"
         
-        # Organizar por usuario si se proporciona user_id
+        # Organize by user when user_id is provided.
         if user_id:
             dest_name = f"user_{user_id}/{base_filename}"
         else:
             dest_name = base_filename
         
-        # Leer el contenido del archivo
+        # Read the file content.
         file_content = await file.read()
         
-        # Subir a Supabase Storage
+        # Upload to Supabase Storage.
         try:
             response = self.client.storage.from_(self.bucket_name).upload(
                 path=dest_name,
@@ -52,10 +52,10 @@ class SupabaseStorage:
                 file_options={"content-type": file.content_type or "application/octet-stream"}
             )
             
-            # Retornar la ruta del archivo en Supabase
+            # Return the file path in Supabase.
             return dest_name
         except Exception as e:
-            # Si el archivo ya existe, intentar actualizar
+            # If the file already exists, try to update it.
             if "duplicate" in str(e).lower() or "already exists" in str(e).lower():
                 self.client.storage.from_(self.bucket_name).update(
                     path=dest_name,
@@ -66,7 +66,7 @@ class SupabaseStorage:
             raise Exception(f"Error uploading file to Supabase: {e}")
     
     async def save_uploaded_files(self, files: List[UploadFile], user_id: Optional[int] = None) -> List[str]:
-        """Guarda múltiples archivos en Supabase Storage"""
+        """Saves multiple files in Supabase Storage."""
         saved_paths = []
         
         for file in files:
@@ -76,7 +76,7 @@ class SupabaseStorage:
         return saved_paths
     
     def delete_file(self, file_path: str) -> bool:
-        """Elimina un archivo de Supabase Storage"""
+        """Deletes a file from Supabase Storage."""
         try:
             self.client.storage.from_(self.bucket_name).remove([file_path])
             return True
@@ -85,7 +85,7 @@ class SupabaseStorage:
             return False
     
     def file_exists(self, file_path: str) -> bool:
-        """Verifica si un archivo existe en Supabase Storage"""
+        """Checks whether a file exists in Supabase Storage."""
         try:
             files = self.client.storage.from_(self.bucket_name).list()
             return any(f['name'] == file_path for f in files)
@@ -95,21 +95,21 @@ class SupabaseStorage:
     
     def get_file_info(self, file_path: str) -> Dict:
         """
-        Obtiene información de un archivo desde Supabase Storage
-        Returns: Dict con filename, file_type, file_size_bytes, file_path, public_url
+        Gets file information from Supabase Storage.
+        Returns: Dict with filename, file_type, file_size_bytes, file_path, and public_url.
         """
         try:
-            # Obtener la URL pública del archivo
+            # Get the public URL for the file.
             public_url = self.get_public_url(file_path)
             
-            # Extraer información del path
+            # Extract path information.
             path_obj = Path(file_path)
             filename = path_obj.name
             file_type = path_obj.suffix.lower().replace(".", "")
             
-            # Intentar obtener metadata del archivo
+            # Try to get file metadata.
             try:
-                # Si el path tiene carpetas (ej: user_1/archivo.pdf), listar dentro de esa carpeta
+                # If the path has folders (for example, user_1/file.pdf), list inside that folder.
                 path_parts = file_path.split('/')
                 if len(path_parts) > 1:
                     folder = '/'.join(path_parts[:-1])  # user_1
@@ -136,7 +136,7 @@ class SupabaseStorage:
             return {}
     
     def get_public_url(self, file_path: str) -> str:
-        """Obtiene la URL pública de un archivo"""
+        """Gets the public URL for a file."""
         try:
             response = self.client.storage.from_(self.bucket_name).get_public_url(file_path)
             return response
@@ -146,8 +146,8 @@ class SupabaseStorage:
     
     def get_signed_url(self, file_path: str, expires_in: int = 3600) -> str:
         """
-        Obtiene una URL firmada temporal para acceso privado
-        expires_in: tiempo de expiración en segundos (default 1 hora)
+        Gets a temporary signed URL for private access.
+        expires_in: expiration time in seconds (default: 1 hour).
         """
         try:
             response = self.client.storage.from_(self.bucket_name).create_signed_url(
@@ -160,7 +160,7 @@ class SupabaseStorage:
             return ""
     
     def download_file(self, file_path: str) -> bytes:
-        """Descarga un archivo desde Supabase Storage"""
+        """Downloads a file from Supabase Storage."""
         try:
             response = self.client.storage.from_(self.bucket_name).download(file_path)
             return response
@@ -168,7 +168,7 @@ class SupabaseStorage:
             raise Exception(f"Error downloading file from Supabase: {e}")
 
 
-# Instancia global para reutilizar
+# Global reusable instance.
 storage = SupabaseStorage(
     supabase_url=settings.SUPABASE_URL,
     supabase_key=settings.SUPABASE_KEY,
