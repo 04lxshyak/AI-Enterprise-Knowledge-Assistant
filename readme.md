@@ -96,6 +96,13 @@
 
 ---
 
+## Maintainer
+
+This repository is maintained by [04lxshyak](https://github.com/04lxshyak).
+Original project by [aarizah](https://github.com/aarizah) / Alex Ariza Herrera.
+
+---
+
 ## 📝 License
 
 This project is licensed under the **MIT License** – see the [LICENSE](LICENSE) file for details.
@@ -104,7 +111,7 @@ This project is licensed under the **MIT License** – see the [LICENSE](LICENSE
 
 
 
-## 👤 Contact & Connect
+## 👤 Original Author
 
 **Alex Ariza Herrera**  
 Software Engineer | Full-Stack + AI | LLM Integrations | AI-Driven Product Development
